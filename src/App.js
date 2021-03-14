@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+
+import checkAuthentication from './requests/check_authentication';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuthentication()); // Checking if user is logged-in
+  }, []);
+
+  const isAuthenticated = useSelector((state) => state.user.entity.isAuthenticated);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <TopBar />
+        <Logo />
+        <TabBar />
+        <div className={styles.container}>
+          <Switch>
+            <Route exact path="/" component={Index} />
+            {isAuthenticated ?
+              [
+                <Route exact path="/logout" component={LogOut} />,
+                <Route path="/cocktails/new" component={New} />,
+              ]
+              :
+              [
+                <Route exact path="/signup" component={SignUp} />,
+                <Route exact path="/login" component={Login} />
+              ]
+            }
+          </Switch>
+        </div>
+      </BrowserRouter>
+    </>
   );
 }
 
