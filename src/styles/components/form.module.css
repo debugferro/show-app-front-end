@@ -1,7 +1,6 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
 
   margin-top: 1rem;
 }
@@ -136,8 +135,14 @@
 }
 
 .select {
-  width: 100%
+  width: 90%;
+
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: solid .1rem var(--font-color);
 }
+
 
 .dateInput {
   width: 90%;
@@ -150,4 +155,10 @@
 
   padding: .5rem;
   background-color: transparent;
+  color: var(--font-color);
+  margin-top: 1.3rem;
+}
+
+.dateInput > div > input:focus {
+  outline: none !important;
 }

@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import styles from '../../styles/components/form.module.css';
+import '../../styles/components/select.css';
 import searchShows from '../../requests/search_shows.js';
 
 
@@ -109,6 +110,7 @@ const loadOptions = useCallback(
       <form className={styles.formContainer} onSubmit={handleSubmit(onSubmit)}>
         <Controller
           className={styles.select}
+          classNamePrefix={"select"}
           name={'show'}
           control={control}
           cacheOptions

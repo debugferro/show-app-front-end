@@ -1,0 +1,20 @@
+.select__control {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.select__control--is-focused, .select__control--menu-is-open {
+  border-color: var(--fancy-pink) !important;
+  box-shadow: 0 0 0 1px var(--fancy-pink) !important;
+}
+
+.select__indicator > svg {
+  background-color: var(--yellow-honey) !important;
+  box-shadow: 3px 1px 0rem var(--blue) !important;
+  border-radius: 30% !important;
+  color: white !important;
+}
+
+.select__indicator-separator {
+  background-color: black !important;
+}
