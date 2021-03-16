@@ -25,11 +25,11 @@ const scheduledShowsSlice = createSlice({
     [postScheduledShow.fulfilled]: (state, { meta, payload }) => {
       const { requestId } = meta;
       if (state.requestStatus === 'pending' && state.presentRequestId === requestId) {
-        console.log(payload)
         state.requestStatus = 'idle';
         state.presentRequestId = undefined;
-        const entity = payload.entity.scheduled_show;
-        scheduledShowsAdapter.addOne(state, entity)
+
+        const entity = payload.entities.scheduled_shows;
+        scheduledShowsAdapter.addMany(state, entity)
       }
     },
     [postScheduledShow.rejected]: (state, action) => {

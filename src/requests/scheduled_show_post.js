@@ -16,13 +16,13 @@ const postScheduledShow = createAsyncThunk(
     console.log(scheduled_show, data.date)
     try {
       const response = await axios.post(`${config.url}/scheduled_shows`, { scheduled_show }, { withCredentials: true });
-      console.log(response, "RESPOSTA")
       if (response.data.status !== 200) {
         // Reject if backend answers with 422 unprocessable entity http status
         return rejectWithValue(response.data);
       }
 
-      const normalized = normalize(response.data.entity, [scheduledShowEntity])
+      console.log(response, "RESPOSTA")
+      const normalized = normalize(response.data.entity, scheduledShowEntity)
       return normalized
     } catch (err) {
       if (!err.response) throw err; // No response message from backend (probably network failure)

@@ -1,90 +1,57 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import dayjs from 'dayjs';
 
 import debounce from "lodash/debounce";
-
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-
 import AsyncSelect from 'react-select/async';
 import makeAnimated from 'react-select/animated';
-
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-import styles from '../../styles/components/form.module.css';
-import '../../styles/components/select.css';
-
-import searchShows from '../../requests/search_shows.js';
-import postScheduledShow from '../../requests/scheduled_show_post';
-
-toast.configure();
-
-const minDate = dayjs().toDate();
-const maxDate = dayjs().add(1, 'year').toDate();
-
-const validationSchema = yup.object().shape({
-  date: yup.date().min(minDate, "WHAT? You can't schedule on the past")
-    .max(maxDate, "Max date is up to one year!")
-});
+import '../../../styles/components/select.css';
+import { validationSchema, createOptions, searchShows, postScheduledShow, showToastError, minDate, maxDate, styles } from './index';
 
 export default function SingUpForm() {
-  const { handleSubmit, errors, control } = useForm({ mode: 'onChange', resolver: yupResolver(validationSchema) });
-  const animatedComponents = makeAnimated();
-  const dispatch = useDispatch();
-
-  const [options, setOptions] = useState([{ value: '', label: '' }]);
+  const { handleSubmit, errors, control } = useForm({ mode: 'onChange',
+    resolver: yupResolver(validationSchema)
+  });
+  const apiErrors = useSelector((state) => state.scheduled_shows.errors);
   const shows = useSelector((state) => state.shows.entities);
   const ids = useSelector((state) => state.shows.ids);
 
+  const [options, setOptions] = useState([{ value: '', label: '' }]);
   const [date, setDate] = useState(minDate)
-
-  const createOptions = (showIds) => {
-    return showIds.map((id) => {
-      return { value: shows[id].id, label: shows[id].title }
-    })
-  }
+  const animatedComponents = makeAnimated();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     setOptions(createOptions(ids))
   }, [shows])
 
+  useEffect(() => {
+    if (apiErrors && Array.isArray(apiErrors)) {
+      apiErrors.forEach((error) => {
+        showToastError(error)
+      })
+    } else {
+      showToastError(apiErrors)
+    }
+  }, [apiErrors]);
+
   const onSubmit = async (data) => {
-    dispatch(postScheduledShow(data));
+    const response = await dispatch(postScheduledShow(data));
+    if (response?.meta?.requestStatus === 'fulfilled') history.push('/');
   };
-
-  // useEffect(() => {
-  //   if (apiErrors && apiErrors.length) {
-  //     apiErrors.forEach((error) => {
-  //       toast.error(error, {
-  //         position: "top-right",
-  //         autoClose: 5000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //       });
-  //     })
-  //   }
-  // }, [apiErrors]);
-
-  const displayOptions = (data) => {
-    return data.payload.result.map((id) => {
-      return { value: id, label: data.payload.entities.shows[id].title }
-    });
-  }
 
   const loadOptions = useCallback(
     debounce((query, callback) => {
+      console.log(query)
       dispatch(searchShows(query))
-        .then((data) => callback(displayOptions(data)));
+        .then(({ payload }) => callback(payload.result
+          .map(id => ({ value: id, label: payload.entities.shows[id].title })
+          )));
     }, 1000)
   )
 
@@ -116,7 +83,9 @@ export default function SingUpForm() {
           as={DatePicker}
         />
         <div className={`${styles.formWarning} ${errors.date ? styles.error : ''}`}>
-          {errors.date && <span>{errors.date.message}</span>}
+          {
+            errors.date && <span>{errors.date.message}</span>
+          }
         </div>
         <input className={styles.formSubmit} type="submit" value="Schedule" />
       </form>

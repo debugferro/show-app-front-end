@@ -60,14 +60,11 @@ const showSlice = createSlice({
     [searchShows.fulfilled]: (state, { meta, payload }) => {
       const { requestId } = meta;
       if (state.requestStatus === 'pending' && state.presentRequestId === requestId) {
-        console.log(payload)
-        console.log(state)
         state.requestStatus = 'idle';
         state.presentRequestId = undefined;
+        console.log(payload, "SHOW PAYLOAD")
         const entities = payload.entities.shows;
-        // state.entities = { ...state.entities, ...entities }
-        // const ids = Object.keys(payload.entities.shows)
-        // state.ids = [...state.ids, ...ids]
+        console.log(entities, "SHOWSADAPTER")
         showsAdapter.addMany(state, entities)
       }
     },
