@@ -138,3 +138,16 @@
 .select {
   width: 100%
 }
+
+.dateInput {
+  width: 90%;
+  height: 2.5rem;
+
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid .1rem var(--font-color);
+
+  padding: .5rem;
+  background-color: transparent;
+}

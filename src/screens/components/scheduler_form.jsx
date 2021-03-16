@@ -120,6 +120,7 @@ const loadOptions = useCallback(
         />
         <Controller
           name={'date'}
+          className={styles.dateInput}
           showTimeInput
           timeInputLabel={"Time:"}
           dateFormat={"MM/dd/yyyy h:mm aa"}
