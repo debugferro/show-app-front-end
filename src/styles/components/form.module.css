@@ -134,3 +134,7 @@
 .hidden {
   display: none;
 }
+
+.select {
+  width: 100%
+}

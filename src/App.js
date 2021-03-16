@@ -8,6 +8,7 @@ import Index from './screens/index';
 import Login from './screens/login';
 import Logout from './screens/logout';
 import Signup from './screens/signup';
+import Scheduler from './screens/scheduler';
 
 function App() {
   const dispatch = useDispatch();
@@ -25,7 +26,8 @@ function App() {
           {isAuthenticated ?
             [
               <Route exact path="/" component={Index} />,
-              <Route exact path="/logout" component={Logout} />
+              <Route exact path="/logout" component={Logout} />,
+              <Route exact path="/scheduler" component={Scheduler} />
             ]
             :
             [
