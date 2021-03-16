@@ -20,34 +20,30 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import styles from '../../styles/components/form.module.css';
 import '../../styles/components/select.css';
-import searchShows from '../../requests/search_shows.js';
 
+import searchShows from '../../requests/search_shows.js';
+import postScheduledShow from '../../requests/scheduled_show_post';
 
 toast.configure();
 
+const minDate = dayjs().toDate();
+const maxDate = dayjs().add(1, 'year').toDate();
+
 const validationSchema = yup.object().shape({
-  email: yup.string()
-    .email('E-mail address format is invalid')
-    .required('E-mail address is required'),
-  first_name: yup.string().min(3).max(20).required('First Name is required'),
-  last_name: yup.string().min(3).max(20).required('Last Name is required'),
-  username: yup.string().min(3).max(20).required('Username is required'),
-  password: yup.string().required('Password is required!').min(8).max(20),
-  password_confirmation: yup.string().required('Password confirmation is required')
-    .oneOf([yup.ref('password'), null], 'Password must match'),
+  date: yup.date().min(minDate, "WHAT? You can't schedule on the past")
+    .max(maxDate, "Max date is up to one year!")
 });
 
 export default function SingUpForm() {
-  const { register, handleSubmit, errors, control } = useForm({ mode: 'onChange', resolver: yupResolver(validationSchema) });
+  const { handleSubmit, errors, control } = useForm({ mode: 'onChange', resolver: yupResolver(validationSchema) });
   const animatedComponents = makeAnimated();
-
   const dispatch = useDispatch();
 
-  const [options, setOptions] = useState([{value: '', label: ''}]);
+  const [options, setOptions] = useState([{ value: '', label: '' }]);
   const shows = useSelector((state) => state.shows.entities);
   const ids = useSelector((state) => state.shows.ids);
 
-  const [date, setDate] = useState(dayjs());
+  const [date, setDate] = useState(minDate)
 
   const createOptions = (showIds) => {
     return showIds.map((id) => {
@@ -60,6 +56,7 @@ export default function SingUpForm() {
   }, [shows])
 
   const onSubmit = async (data) => {
+    dispatch(postScheduledShow(data));
   };
 
   // useEffect(() => {
@@ -78,32 +75,18 @@ export default function SingUpForm() {
   //   }
   // }, [apiErrors]);
 
-  // const loadOptions = async (query) => {
-  //   await setSearchTerm(query)
-  //   await refetch()
-  //   return createOptions()
-  // }
+  const displayOptions = (data) => {
+    return data.payload.result.map((id) => {
+      return { value: id, label: data.payload.entities.shows[id].title }
+    });
+  }
 
-  // const displayOptions = (payload) => {
-  //   return payload.data.entities.map((id) => {
-  //     return { value: shows[id].id, label: shows[id].title }
-  //   })
-  // }
-
-const loadOptions = useCallback(
-  debounce((query, callback) => {
-    dispatch(searchShows(query))
-    .then((options) => callback(console.log(options)));
-  }, 1000)
-)
-
-// const addYears = (date, quantity) => {
-//   const full = date.getDate();
-//   date.setMonth(date.getFullYear() + quantity);
-//   const teste = new Date(date.setFullYear(date.getFullYear() + quantity))
-//   console.log(teste)
-//   return teste
-// };
+  const loadOptions = useCallback(
+    debounce((query, callback) => {
+      dispatch(searchShows(query))
+        .then((data) => callback(displayOptions(data)));
+    }, 1000)
+  )
 
   return (
     <>
@@ -125,39 +108,18 @@ const loadOptions = useCallback(
           className={styles.dateInput}
           showTimeInput
           timeInputLabel={"Time:"}
-          dateFormat={"MM/dd/yyyy h:mm aa"}
-          minDate={date.toDate()}
-          maxDate={date.add(1, 'year').toDate()}
-          selected={date.toDate()}
+          minDate={minDate}
+          maxDate={maxDate}
+          onSelect={(date) => setDate(date)}
+          selected={date}
           control={control}
-          placeholderText={"When you're watching?"}
           as={DatePicker}
         />
-        <div className={styles.formInput}>
-          <input required noValidate type="text" name="email" id="email" ref={register()} />
-          <label htmlFor="email">E-mail</label>
-          <div className={`${styles.formWarning} ${errors.email ? styles.error : ''}`}>
-            {errors.email && <span>{errors.email.message}</span>}
-          </div>
+        <div className={`${styles.formWarning} ${errors.date ? styles.error : ''}`}>
+          {errors.date && <span>{errors.date.message}</span>}
         </div>
-        <input className={styles.formSubmit} type="submit" value="Sign Up" />
+        <input className={styles.formSubmit} type="submit" value="Schedule" />
       </form>
     </>
   );
 }
-
-// const onSubmit = async (data) => {
-
-// };
-
-// const searchShow = async (query) => {
-//   const response = await mutation.mutate(query)
-//   console.log(queryClient.getQueryState('shows'))
-//   // return createOptions(response.payload.entities)
-// }
-
-// const loadOptions = useCallback(
-//   debounce((query, callback) => {
-//     searchShow(query).then((options) => callback(options));
-//   }, 1000)
-// )

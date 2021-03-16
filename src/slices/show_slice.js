@@ -1,9 +1,6 @@
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import fetchMostFavoritedShows from '../requests/fetch_most_favorited_shows';
 import searchShows from '../requests/search_shows';
-import { normalize, schema } from 'normalizr'
-import { conforms } from 'lodash';
-
 
 const showsAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.title.localeCompare(b.title)
@@ -16,13 +13,6 @@ const showSlice = createSlice({
     presentRequestId: undefined,
     errors: [],
   }),
-  // {
-  //   ids: [],
-  //   entities: [],
-  //   requestStatus: 'idle',
-  //   errors: [],
-  //   presentRequestId: undefined,
-  // },
   reducers: {},
   extraReducers: {
     [fetchMostFavoritedShows.pending]: (state, action) => {
