@@ -1,20 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import config from './config';
 
+import { callAction } from './all_requests';
+import { userEntity } from '../shared/schemas';
 // Authentication API call for login
 
 const checkAuthentication = createAsyncThunk(
   'user/authLogin',
-  async (data, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${config.url}/logged_in`, { withCredentials: true });
-      return response.data.user;
-    } catch (err) {
-      if (!err.response) throw err; // No response message from backend (probably network failure)
-      return rejectWithValue(err.response.data); // Any other type of error
-    }
+  async (data, thunkAPI) => {
+    return await callAction(undefined, 'get',
+      thunkAPI, '/logged_in', 200, 'user'
+    );
   },
 );
-
 export default checkAuthentication;

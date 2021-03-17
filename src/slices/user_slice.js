@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import requestAuthentication from '../requests/authentication';
 import logout from '../requests/logout';
 
+import { pendingReducer, rejectedReducer } from './shared';
+
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -17,43 +19,27 @@ const userSlice = createSlice({
   },
   reducers: {
     authenticate(state, action) {
-      state.entity = { ...action.payload }
+      state.entity = { ...action.payload.entity }
     }
   },
   extraReducers: {
     [requestAuthentication.pending]: (state, action) => {
-      if (state.requestStatus === 'idle') {
-        state.requestStatus = 'pending';
-        state.presentRequestId = action.meta.requestId;
-      };
+      pendingReducer(state, action);
     },
     [requestAuthentication.fulfilled]: (state, action) => {
       const { requestId } = action.meta;
       const { payload } = action;
       if (state.requestStatus === 'pending' && state.presentRequestId === requestId) {
         state.requestStatus = 'idle';
-        state.entity = { ...payload };
+        state.entity = { ...payload.entity };
         state.presentRequestId = undefined;
       }
-      // ...state, ...payload, requestStatus: 'idle'
     },
     [requestAuthentication.rejected]: (state, action) => {
-      // Dealing errors. If no payload is informed, then a message will be at least.
-      const { requestId } = action.meta;
-      if (state.requestStatus === 'pending' && state.presentRequestId === requestId) {
-        state.requestStatus = 'idle';
-        if (action.payload) {
-          state.errors = action.payload.errors;
-        } else {
-          state.errors = action.error.message;
-        }
-      }
+      rejectedReducer(state, action)
     },
     [logout.pending]: (state, action) => {
-      if (state.requestStatus === 'idle') {
-        state.requestStatus = 'pending';
-        state.presentRequestId = action.meta.requestId;
-      };
+      pendingReducer(state, action)
     },
     [logout.fulfilled]: (state, action) => {
       const { requestId } = action.meta;
@@ -63,11 +49,7 @@ const userSlice = createSlice({
       }
     },
     [logout.rejected]: (state, action) => {
-      const { requestId } = action.meta;
-      if (state.requestStatus === 'pending' && state.presentRequestId === requestId) {
-        state.requestStatus = 'idle';
-        if (action.error) { state.errors = action.error.message }
-      }
+      rejectedReducer(state, action)
     }
   },
 });

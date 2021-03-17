@@ -10,7 +10,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import '../../../styles/components/select.css';
-import { scheduleValidationSchema, createOptions, searchShows, postScheduledShow, showToastError, minDate, maxDate, styles } from './index';
+import { scheduleValidationSchema, createOptions, searchShows, postScheduledShow, showToastError, showToastSuccess, minDate, maxDate, styles } from './index';
 
 export default function SingUpForm() {
   const { handleSubmit, errors, control } = useForm({ mode: 'onChange',
@@ -42,7 +42,10 @@ export default function SingUpForm() {
 
   const onSubmit = async (data) => {
     const response = await dispatch(postScheduledShow(data));
-    if (response?.meta?.requestStatus === 'fulfilled') history.push('/');
+    if (response?.meta?.requestStatus === 'fulfilled') {
+      showToastSuccess("Scheduling successful!")
+      history.push('/');
+    }
   };
 
   const loadOptions = useCallback(
@@ -62,11 +65,12 @@ export default function SingUpForm() {
           name={'show'}
           control={control}
           defaultValue={options}
-          render={({ ref, onBlur }) => (
+          render={({ ref, onBlur, onChange }) => (
             <AsyncSelect
               cacheOptions
               inputRef={ref}
               onBlur={onBlur}
+              onChange={onChange}
               className={styles.select}
               classNamePrefix={"select"}
               defaultOptions={options}

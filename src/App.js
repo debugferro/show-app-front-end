@@ -5,7 +5,7 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 import checkAuthentication from './requests/check_authentication';
 
 import { UserRoutes, PublicRoutes } from './routes';
-
+import NavBar from './screens/navigation/navbar';
 
 function App() {
   const dispatch = useDispatch();
@@ -14,11 +14,12 @@ function App() {
     dispatch(checkAuthentication()); // Checking if user is logged-in
   }, []);
 
-  const isAuthenticated = useSelector((state) => state.user.entity.is_authenticated);
+  const isAuthenticated = useSelector((state) => state.user.entity?.is_authenticated);
 
   return (
     <>
       <BrowserRouter>
+        <NavBar />
           <Switch>
           {isAuthenticated ? <UserRoutes /> : <PublicRoutes />}
           </Switch>

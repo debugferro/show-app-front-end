@@ -10,7 +10,7 @@ export { default as postScheduledShow } from '../../../requests/scheduled_show_p
 export { default as requestSignUp } from '../../../requests/signup';
 export { default as authenticate } from '../../../actions/authenticate';
 
-export { showToastError } from '../shared/show_toast_error';
+export { showToastError, showToastSuccess } from '../shared/show_toast_alert';
 export { default as styles } from '../../../styles/components/form.module.css';
 
 // SHARED FUNCTIONS & SCHEMAS -----------------------------------------------
