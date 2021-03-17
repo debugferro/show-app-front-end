@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 
 import checkAuthentication from './requests/check_authentication';
 
-import Index from './screens/index';
-import Login from './screens/login';
-import Logout from './screens/logout';
-import Signup from './screens/signup';
-import Scheduler from './screens/scheduler';
+import { UserRoutes, PublicRoutes } from './routes';
+
 
 function App() {
   const dispatch = useDispatch();
@@ -23,18 +20,7 @@ function App() {
     <>
       <BrowserRouter>
           <Switch>
-          {isAuthenticated ?
-            [
-              <Route exact path="/" component={Index} />,
-              <Route exact path="/logout" component={Logout} />,
-              <Route exact path="/scheduler" component={Scheduler} />
-            ]
-            :
-            [
-              <Route exact path="/" component={Login} />,
-              <Route exact path="/signup" component={Signup} />
-            ]
-          }
+          {isAuthenticated ? <UserRoutes /> : <PublicRoutes />}
           </Switch>
       </BrowserRouter>
     </>

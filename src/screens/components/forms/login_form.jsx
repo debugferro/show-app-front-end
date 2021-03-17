@@ -3,19 +3,16 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
-import styles from '../../styles/components/form.module.css';
+import styles from '../../../styles/components/form.module.css';
+import requestAuthentication from '../../../requests/authentication';
 
-import requestAuthentication from '../../requests/authentication';
-
-const validationSchema = yup.object().shape({
-  email: yup.string().required('Email is required!'),
-  password: yup.string().required('Password is required!'),
-});
+import { loginValidationSchema } from './index';
 
 export default function LoginForm() {
-  const { register, handleSubmit, errors } = useForm({ mode: 'onChange', resolver: yupResolver(validationSchema) });
+  const { register, handleSubmit, errors } = useForm({ mode: 'onChange',
+    resolver: yupResolver(loginValidationSchema)
+  });
   const dispatch = useDispatch();
   const history = useHistory();
 

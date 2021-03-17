@@ -1,7 +1,7 @@
 import React from 'react';
 
 import styles from '../styles/screens/form_screens.module.css';
-import SingUpForm from './components/signup_form';
+import SingUpForm from './components/forms/signup_form';
 
 function SignUp() {
   return (

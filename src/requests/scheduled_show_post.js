@@ -3,7 +3,7 @@ import axios from 'axios';
 import { normalize } from 'normalizr'
 
 import config from './config';
-import { scheduledShowEntity } from '../schemas';
+import { scheduledShowEntity } from '../shared/schemas';
 // Authentication API call for login
 
 const postScheduledShow = createAsyncThunk(

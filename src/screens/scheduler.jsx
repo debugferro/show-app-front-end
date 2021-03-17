@@ -1,5 +1,5 @@
 import React from 'react';
-import SchedulerForm from './components/scheduler_form/scheduler_form';
+import SchedulerForm from './components/forms/scheduler_form';
 
 import styles from '../styles/screens/form_screens.module.css';
 

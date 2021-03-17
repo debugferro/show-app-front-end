@@ -3,8 +3,6 @@ import userSlice from './slices/user_slice';
 import signUpSlice from './slices/signup_slice';
 import showSlice from './slices/show_slice';
 import scheduledShowsSlice from './slices/scheduled_shows_slice';
-// import ingredientsSlice from './slices/ingredients_slice';
-// import newCocktailFormSlice from './slices/new_cocktail_form_slice';
 
 const reducer = combineReducers({
   user: userSlice,
